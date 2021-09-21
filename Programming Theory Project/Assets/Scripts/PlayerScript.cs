@@ -27,10 +27,10 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Move();
         Attack();
-        
+        Move();
     }
+
     void Move()
     {
         //Change later
