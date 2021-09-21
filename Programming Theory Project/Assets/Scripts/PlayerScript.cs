@@ -55,14 +55,14 @@ public class PlayerScript : MonoBehaviour
         if(isTurning) {
             if (whenTurning > 0)
             {
-            whenTurning -= 0.1f;
+            whenTurning -= Time.deltaTime;
             }
         }
         else
         {
             if(whenTurning < 1)
             {
-                whenTurning += 0.1f;
+                whenTurning += Time.deltaTime;
             }
             
         }
