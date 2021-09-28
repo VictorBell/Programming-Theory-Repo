@@ -4,24 +4,42 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    [SerializeField] float speed = 10f;
-    [SerializeField] float rotationSpeed;
+    [SerializeField]  float speed = 10f;
+    [SerializeField]  float rotationSpeed;
     float horizontalInput;
     float verticalInput;
-    [SerializeField]float whenTurning;
+    [SerializeField] float m_magnitude;
+
+    private float magnitude
+    {
+        get { return m_magnitude; }
+        set
+        {
+            if (value > 1)
+            {
+                m_magnitude = 1;
+            }
+            else
+            {
+                m_magnitude = value;
+            }
+        }
+    }
+    float speedWhileTurning;
 
     bool isTurning;
     
     Rigidbody playerRb;
     Animator anim;
+    [SerializeField] GameObject player;
 
     Quaternion toRotate;
 
     // Start is called before the first frame update
     void Start()
     {
-        anim = GetComponent<Animator>();
-        playerRb = GetComponent<Rigidbody>();
+        anim = player.GetComponent<Animator>();
+        playerRb = player.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -33,51 +51,51 @@ public class PlayerScript : MonoBehaviour
 
     void Move()
     {
-        //Change later
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        //Change later to mobile controls
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
         Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
-        float magnitude = movementDirection.magnitude;
-        movementDirection.Normalize();
+        magnitude = movementDirection.magnitude;
         
+
         //Rotate while moving 
         if (movementDirection != Vector3.zero)
         {
+            movementDirection.Normalize();
             toRotate = Quaternion.LookRotation(movementDirection, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotate, rotationSpeed * Time.deltaTime);
-            if (toRotate != transform.rotation)
+            player.transform.rotation = Quaternion.RotateTowards(player.transform.rotation, toRotate, rotationSpeed * Time.deltaTime);
+            if (toRotate != player.transform.rotation)
             {
                 isTurning = true;
             }
             else isTurning = false;
-        }
 
-        if(isTurning) {
-            if (whenTurning > 0)
+
+            if (isTurning)
             {
-            whenTurning -= Time.deltaTime;
+                if (speedWhileTurning > 0.5)
+                {
+                    speedWhileTurning -= Time.deltaTime;
+                }
             }
-        }
-        else
-        {
-            if(whenTurning < 1)
+            else
             {
-                whenTurning += Time.deltaTime;
+                if (speedWhileTurning < 1)
+                {
+                    speedWhileTurning += Time.deltaTime;
+                }
+
             }
-            
+            playerRb.transform.Translate(movementDirection * speed * Time.deltaTime * magnitude * speedWhileTurning, Space.World);
         }
-        playerRb.transform.Translate(movementDirection * speed * Time.deltaTime * magnitude * whenTurning, Space.World);
     }
-
     void Attack()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && !anim.GetBool("isAttacking") && anim.GetBool("canAttack"))
         {
             anim.SetBool("isAttacking", true);
         }
-        else
-        {
-            anim.SetBool("isAttacking", false);
-        }
     }
+
+    
 }
