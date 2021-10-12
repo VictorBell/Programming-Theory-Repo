@@ -41,19 +41,27 @@ public class PlayerScript : MonoBehaviour
         anim = player.GetComponent<Animator>();
         playerRb = player.GetComponent<Rigidbody>();
     }
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+        Attack();
 
+        }
+
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
-        Attack();
         Move();
     }
 
     void Move()
     {
         //Change later to mobile controls
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        
         Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
         magnitude = movementDirection.magnitude;
         
@@ -86,12 +94,12 @@ public class PlayerScript : MonoBehaviour
                 }
 
             }
-            playerRb.transform.Translate(movementDirection * speed * Time.deltaTime * magnitude * speedWhileTurning, Space.World);
+            playerRb.MovePosition(player.transform.position + (movementDirection * speed * Time.deltaTime * magnitude * speedWhileTurning));
         }
     }
     void Attack()
     {
-        if (Input.GetKey(KeyCode.Space) && !anim.GetBool("isAttacking") && anim.GetBool("canAttack"))
+        if (!anim.GetBool("isAttacking") && anim.GetBool("canAttack"))
         {
             anim.SetBool("isAttacking", true);
         }

@@ -22,10 +22,16 @@ public class Enemy : MonoBehaviour
     {
       if (chasingForPlayer)
         {
-
+            if (enemy == null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
             transform.LookAt (new Vector3 (player.transform.position.x, transform.position.y, player.transform.position.z));
             Vector3 lookDirection = (player.transform.position - enemy.transform.position).normalized;
-            transform.Translate(lookDirection * speed * Time.deltaTime);
+            transform.Translate(lookDirection * speed * Time.deltaTime, Space.World);
+            }
         }   
     }
 
